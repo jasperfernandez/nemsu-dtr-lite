@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { Building2, ClipboardList, LayoutDashboard, Menu, Search, Users } from 'lucide-vue-next';
+import { Building2, ClipboardList, LayoutDashboard, Menu, Monitor, Moon, Sun, Users } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AttendanceDayController from '@/actions/App/Http/Controllers/AttendanceDayController';
 import DepartmentController from '@/actions/App/Http/Controllers/DepartmentController';
@@ -35,6 +35,7 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import UserMenuContent from '@/components/UserMenuContent.vue';
+import { useAppearance } from '@/composables/useAppearance';
 import { useAuthorization } from '@/composables/useAuthorization';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { getInitials } from '@/composables/useInitials';
@@ -54,6 +55,15 @@ const page = usePage();
 const auth = computed(() => page.props.auth);
 const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
 const { isHr } = useAuthorization();
+
+const { appearance, updateAppearance } = useAppearance();
+
+const themeOrder = ['light', 'dark', 'system'] as const;
+
+function cycleTheme() {
+    const idx = themeOrder.indexOf(appearance.value as (typeof themeOrder)[number]);
+    updateAppearance(themeOrder[(idx + 1) % themeOrder.length]);
+}
 
 const activeItemStyles =
     'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
@@ -206,11 +216,35 @@ const rightNavItems: NavItem[] = [];
                         <Button
                             variant="ghost"
                             size="icon"
-                            class="group h-9 w-9 cursor-pointer"
+                            class="group h-9 w-9 cursor-pointer overflow-hidden"
+                            @click="cycleTheme"
                         >
-                            <Search
-                                class="size-5 opacity-80 group-hover:opacity-100"
-                            />
+                            <span class="sr-only">Toggle theme</span>
+                            <Transition
+                                enter-active-class="transition-all duration-300 ease-out"
+                                enter-from-class="opacity-0 rotate-90 scale-50"
+                                enter-to-class="opacity-100 rotate-0 scale-100"
+                                leave-active-class="transition-all duration-200 ease-in"
+                                leave-from-class="opacity-100 rotate-0 scale-100"
+                                leave-to-class="opacity-0 -rotate-90 scale-50"
+                                mode="out-in"
+                            >
+                                <Sun
+                                    v-if="appearance === 'light'"
+                                    key="light"
+                                    class="size-5 opacity-80 group-hover:opacity-100"
+                                />
+                                <Moon
+                                    v-else-if="appearance === 'dark'"
+                                    key="dark"
+                                    class="size-5 opacity-80 group-hover:opacity-100"
+                                />
+                                <Monitor
+                                    v-else
+                                    key="system"
+                                    class="size-5 opacity-80 group-hover:opacity-100"
+                                />
+                            </Transition>
                         </Button>
 
                         <div class="hidden space-x-1 lg:flex">
