@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
+import GoogleLogoIcon from '@/components/GoogleLogoIcon.vue';
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -96,6 +97,17 @@ defineProps<{
                     <Spinner v-if="processing" />
                     Log in
                 </Button>
+
+                <span class="text-center text-sm text-muted-foreground"
+                    >- or -</span
+                >
+
+                <a href="/oauth/google/redirect" :class="buttonVariants({ variant: 'outline' })">
+                    <GoogleLogoIcon
+                        class="size-5 fill-current dark:text-white"
+                    />
+                    Sign in with Google
+                </a>
             </div>
 
             <div
