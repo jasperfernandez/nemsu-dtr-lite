@@ -2,6 +2,9 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { Building2, ClipboardList, LayoutDashboard, Menu, Search, Users } from 'lucide-vue-next';
 import { computed } from 'vue';
+import AttendanceLogController from '@/actions/App/Http/Controllers/AttendanceLogController';
+import DepartmentController from '@/actions/App/Http/Controllers/DepartmentController';
+import EmployeeController from '@/actions/App/Http/Controllers/EmployeeController';
 import AppLogo from '@/components/AppLogo.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
@@ -37,7 +40,6 @@ import { getInitials } from '@/composables/useInitials';
 import { toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
-import DepartmentController from '@/actions/App/Http/Controllers/DepartmentController';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
@@ -62,12 +64,12 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Attendance Logs',
-        href: dashboard(),
+        href: AttendanceLogController.index(),
         icon: ClipboardList,
     },
     {
         title: 'Employees',
-        href: dashboard(),
+        href: EmployeeController.index(),
         icon: Users,
     },
     {

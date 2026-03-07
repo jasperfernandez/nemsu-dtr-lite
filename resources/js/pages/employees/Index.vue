@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import DepartmentController from '@/actions/App/Http/Controllers/DepartmentController';
+import EmployeeController from '@/actions/App/Http/Controllers/EmployeeController';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,39 +14,38 @@ import {
 } from '@/components/ui/table';
 import { useDialogManager } from '@/composables/dialog/useDialogManager';
 import AppLayout from '@/layouts/AppLayout.vue';
-import type { BreadcrumbItem, Department } from '@/types';
-import AddDepartmentDialog from './components/AddDepartmentDialog.vue';
-import DeleteDepartmentDialog from './components/DeleteDepartmentDialog.vue';
-import EditDepartmentDialog from './components/EditDepartmentDialog.vue';
+import type { BreadcrumbItem, Department, Employee } from '@/types';
+import AddEmployeeDialog from './components/AddEmployeeDialog.vue';
+import DeleteEmployeeDialog from './components/DeleteEmployeeDialog.vue';
+import EditEmployeeDialog from './components/EditEmployeeDialog.vue';
 
 defineProps<{
+    employees: Employee[];
     departments: Department[];
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Departments',
-        href: DepartmentController.index(),
+        title: 'Employees',
+        href: EmployeeController.index(),
     },
 ];
 
-const addDialog = useDialogManager('add-department');
-const editDialog = useDialogManager<Department>('edit-department');
-const deleteDialog = useDialogManager<Department>('delete-department');
+const addDialog = useDialogManager('add-employee');
+const editDialog = useDialogManager<Employee>('edit-employee');
+const deleteDialog = useDialogManager<Employee>('delete-employee');
 </script>
 
 <template>
-    <Head title="Departments" />
+    <Head title="Employees" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div
             class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
         >
             <div class="flex items-center justify-between">
-                <Heading title="Departments" />
-                <Button size="lg" @click="addDialog.open()"
-                    >Add Department</Button
-                >
+                <Heading title="Employees" />
+                <Button size="lg" @click="addDialog.open()">Add Employee</Button>
             </div>
             <div class="rounded-md border">
                 <Table class="w-full caption-bottom text-sm">
@@ -60,15 +59,27 @@ const deleteDialog = useDialogManager<Department>('delete-department');
                             >
                             <TableHead
                                 class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
-                                >Code</TableHead
+                                >Employee #</TableHead
                             >
                             <TableHead
                                 class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
-                                >Name</TableHead
+                                >Full Name</TableHead
                             >
                             <TableHead
                                 class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
-                                >Created At</TableHead
+                                >Department</TableHead
+                            >
+                            <TableHead
+                                class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
+                                >Email</TableHead
+                            >
+                            <TableHead
+                                class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
+                                >Position</TableHead
+                            >
+                            <TableHead
+                                class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
+                                >Status</TableHead
                             >
                             <TableHead
                                 class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
@@ -78,51 +89,59 @@ const deleteDialog = useDialogManager<Department>('delete-department');
                     </TableHeader>
                     <TableBody class="[&_tr:last-child]:border-0">
                         <TableRow
-                            v-for="department in departments"
-                            :key="department.id"
+                            v-for="employee in employees"
+                            :key="employee.id"
                             class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
                         >
                             <TableCell class="p-4 align-middle">{{
-                                department.id
+                                employee.id
                             }}</TableCell>
                             <TableCell class="p-4 align-middle">{{
-                                department.code
+                                employee.employee_number
                             }}</TableCell>
                             <TableCell class="p-4 align-middle">{{
-                                department.name
+                                employee.first_name + ' ' + employee.last_name
                             }}</TableCell>
                             <TableCell class="p-4 align-middle">{{
-                                new Date(
-                                    department.created_at,
-                                ).toLocaleDateString()
+                                employee.department?.name ?? '—'
+                            }}</TableCell>
+                            <TableCell class="p-4 align-middle">{{
+                                employee.email ?? '—'
+                            }}</TableCell>
+                            <TableCell class="p-4 align-middle">{{
+                                employee.position
+                            }}</TableCell>
+                            <TableCell class="p-4 align-middle capitalize">{{
+                                employee.status
                             }}</TableCell>
                             <TableCell class="align-middle">
                                 <Button
                                     variant="link"
-                                    @click="editDialog.open(department)"
+                                    @click="editDialog.open(employee)"
                                     >Edit</Button
                                 >
                                 <Button
                                     variant="link"
                                     class="text-destructive"
-                                    @click="deleteDialog.open(department)"
+                                    @click="deleteDialog.open(employee)"
                                     >Delete</Button
                                 >
                             </TableCell>
                         </TableRow>
                         <TableEmpty
-                            v-if="departments.length === 0"
-                            :colspan="5"
+                            v-if="employees.length === 0"
+                            :colspan="8"
                         >
-                            No departments found.
+                            No employees found.
                         </TableEmpty>
                     </TableBody>
                 </Table>
             </div>
         </div>
 
-        <AddDepartmentDialog />
-        <EditDepartmentDialog />
-        <DeleteDepartmentDialog />
+        <AddEmployeeDialog :departments="departments" />
+        <EditEmployeeDialog :departments="departments" />
+        <DeleteEmployeeDialog />
     </AppLayout>
 </template>
+

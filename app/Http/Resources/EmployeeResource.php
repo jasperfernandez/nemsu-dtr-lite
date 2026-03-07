@@ -18,6 +18,7 @@ class EmployeeResource extends JsonResource
             'last_name' => $this->last_name,
             'position' => $this->position,
             'status' => $this->status,
+            'email' => $this->whenLoaded('user', fn () => $this->user->email),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
 

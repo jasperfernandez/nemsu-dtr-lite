@@ -15,6 +15,7 @@ class UserSeeder extends Seeder
         ], [
             'name' => 'Jasper Fernandez',
             'password' => bcrypt('secret'),
+            'email_verified_at' => now(),
         ]);
 
         $hr->assignRole(Role::HR);
