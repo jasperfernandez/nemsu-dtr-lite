@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { ChevronDown, ChevronRight, Clock, LogIn, LogOut } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import AttendanceDayController from '@/actions/App/Http/Controllers/AttendanceDayController';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
@@ -17,25 +17,23 @@ import {
 } from '@/components/ui/table';
 import { useDialogManager } from '@/composables/dialog/useDialogManager';
 import AppLayout from '@/layouts/AppLayout.vue';
-import type { AttendanceDay, BreadcrumbItem, Employee } from '@/types';
-import AddAttendanceDayDialog from './components/AddAttendanceDayDialog.vue';
+import type { AttendanceDay, AttendanceLog, BreadcrumbItem, Employee } from '@/types';
 import DeleteAttendanceDayDialog from './components/DeleteAttendanceDayDialog.vue';
-import EditAttendanceDayDialog from './components/EditAttendanceDayDialog.vue';
+import TimeLogButton from './components/TimeLogButton.vue';
 
-defineProps<{
+const props = defineProps<{
     attendanceDays: AttendanceDay[];
     employees: Employee[];
+    isHr: boolean;
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Logs',
+        title: 'Attendance Days',
         href: AttendanceDayController.index(),
     },
 ];
 
-const addDialog = useDialogManager('add-attendance-day');
-const editDialog = useDialogManager<AttendanceDay>('edit-attendance-day');
 const deleteDialog = useDialogManager<AttendanceDay>('delete-attendance-day');
 
 const expandedRows = ref<Set<number>>(new Set());
@@ -82,7 +80,6 @@ function getLogIn(day: AttendanceDay) {
 }
 
 function getLogOut(day: AttendanceDay) {
-    // Last "out" log of the day
     const outs = day.attendance_logs?.filter((l) => l.type === 'out') ?? [];
     return outs[outs.length - 1];
 }
@@ -96,16 +93,29 @@ function computeDuration(day: AttendanceDay): string | null {
     const minutes = Math.floor((diff % 3600000) / 60000);
     return `${hours}h ${minutes}m`;
 }
+
+// Derive the last log from today's attendance day for the Time In/Out button
+const todayStr = new Date().toISOString().slice(0, 10);
+const todayLastLog = computed<AttendanceLog | undefined>(() => {
+    const today = props.attendanceDays.find((d) => d.work_date === todayStr);
+    if (!today?.attendance_logs?.length) return undefined;
+    return [...today.attendance_logs].sort(
+        (a, b) => new Date(b.log_time).getTime() - new Date(a.log_time).getTime(),
+    )[0];
+});
 </script>
 
 <template>
-    <Head title="Logs" />
+    <Head title="Attendance Days" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
             <div class="flex items-center justify-between">
-                <Heading title="Logs" description="Daily time records with time-in and time-out logs." />
-                <Button size="lg" @click="addDialog.open()">Add Attendance Day</Button>
+                <Heading
+                    title="Attendance Days"
+                    description="Daily time records with time-in and time-out logs."
+                />
+                <TimeLogButton v-if="!isHr" :last-log="todayLastLog" />
             </div>
 
             <div class="rounded-md border">
@@ -116,8 +126,11 @@ function computeDuration(day: AttendanceDay): string | null {
                             <TableHead class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                                 Work Date
                             </TableHead>
-                            <TableHead class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                            <TableHead v-if="isHr" class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                                 Employee
+                            </TableHead>
+                            <TableHead class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                                Status
                             </TableHead>
                             <TableHead class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                                 Time In
@@ -131,19 +144,17 @@ function computeDuration(day: AttendanceDay): string | null {
                             <TableHead class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                                 Logs
                             </TableHead>
-                            <TableHead class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                            <TableHead v-if="isHr" class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                                 Actions
                             </TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody class="[&_tr:last-child]:border-0">
                         <template v-for="day in attendanceDays" :key="day.id">
-                            <!-- Main row -->
                             <TableRow
                                 class="border-b transition-colors hover:bg-muted/50"
                                 :class="{ 'bg-muted/30': isExpanded(day.id) }"
                             >
-                                <!-- Expand toggle -->
                                 <TableCell class="w-10 px-4 align-middle">
                                     <Button
                                         v-if="day.attendance_logs && day.attendance_logs.length > 0"
@@ -153,14 +164,8 @@ function computeDuration(day: AttendanceDay): string | null {
                                         @click="toggleRow(day.id)"
                                         :aria-label="isExpanded(day.id) ? 'Collapse logs' : 'Expand logs'"
                                     >
-                                        <ChevronDown
-                                            v-if="isExpanded(day.id)"
-                                            class="size-4 text-muted-foreground"
-                                        />
-                                        <ChevronRight
-                                            v-else
-                                            class="size-4 text-muted-foreground"
-                                        />
+                                        <ChevronDown v-if="isExpanded(day.id)" class="size-4 text-muted-foreground" />
+                                        <ChevronRight v-else class="size-4 text-muted-foreground" />
                                     </Button>
                                 </TableCell>
 
@@ -168,7 +173,7 @@ function computeDuration(day: AttendanceDay): string | null {
                                     {{ formatDate(day.work_date) }}
                                 </TableCell>
 
-                                <TableCell class="p-4 align-middle">
+                                <TableCell v-if="isHr" class="p-4 align-middle">
                                     <template v-if="day.employee">
                                         <div class="font-medium">
                                             {{ day.employee.first_name }} {{ day.employee.last_name }}
@@ -178,6 +183,12 @@ function computeDuration(day: AttendanceDay): string | null {
                                         </div>
                                     </template>
                                     <span v-else class="text-muted-foreground">—</span>
+                                </TableCell>
+
+                                <TableCell class="p-4 align-middle">
+                                    <Badge :variant="statusVariantMap[day.status] ?? 'outline'" class="capitalize">
+                                        {{ day.status }}
+                                    </Badge>
                                 </TableCell>
 
                                 <TableCell class="p-4 align-middle">
@@ -210,8 +221,7 @@ function computeDuration(day: AttendanceDay): string | null {
                                     </Badge>
                                 </TableCell>
 
-                                <TableCell class="align-middle">
-                                    <Button variant="link" @click="editDialog.open(day)">Edit</Button>
+                                <TableCell v-if="isHr" class="align-middle">
                                     <Button
                                         variant="link"
                                         class="text-destructive"
@@ -226,7 +236,7 @@ function computeDuration(day: AttendanceDay): string | null {
                                 class="border-b bg-muted/20 hover:bg-muted/20"
                             >
                                 <TableCell />
-                                <TableCell :colspan="8" class="px-4 pb-4 pt-1">
+                                <TableCell :colspan="isHr ? 8 : 6" class="px-4 pb-4 pt-1">
                                     <div class="space-y-1">
                                         <p class="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                                             All Logs ({{ day.attendance_logs?.length }})
@@ -237,19 +247,13 @@ function computeDuration(day: AttendanceDay): string | null {
                                                 :key="log.id"
                                                 class="flex items-center gap-2 rounded-md border bg-background px-3 py-1.5 text-xs"
                                             >
-                                                <span
-                                                    :class="log.type === 'in'
-                                                        ? 'text-emerald-600 dark:text-emerald-400'
-                                                        : 'text-rose-600 dark:text-rose-400'"
-                                                >
+                                                <span :class="log.type === 'in' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'">
                                                     <LogIn v-if="log.type === 'in'" class="size-3" />
                                                     <LogOut v-else class="size-3" />
                                                 </span>
                                                 <span class="font-medium capitalize">{{ log.type }}</span>
                                                 <span class="text-muted-foreground">{{ formatTime(log.log_time) }}</span>
-                                                <Badge variant="outline" class="text-[10px]">
-                                                    {{ log.source }}
-                                                </Badge>
+                                                <Badge variant="outline" class="text-[10px]">{{ log.source }}</Badge>
                                             </div>
                                         </div>
                                         <p v-if="day.remarks" class="mt-2 text-xs text-muted-foreground">
@@ -260,7 +264,7 @@ function computeDuration(day: AttendanceDay): string | null {
                             </TableRow>
                         </template>
 
-                        <TableEmpty v-if="attendanceDays.length === 0" :colspan="9">
+                        <TableEmpty v-if="attendanceDays.length === 0" :colspan="isHr ? 9 : 7">
                             No attendance days found.
                         </TableEmpty>
                     </TableBody>
@@ -268,8 +272,6 @@ function computeDuration(day: AttendanceDay): string | null {
             </div>
         </div>
 
-        <AddAttendanceDayDialog :employees="employees" />
-        <EditAttendanceDayDialog :employees="employees" />
         <DeleteAttendanceDayDialog />
     </AppLayout>
 </template>

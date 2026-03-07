@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\AttendanceDayController;
-use App\Http\Controllers\AttendanceLogController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\TimeLogController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -19,6 +19,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('employees', EmployeeController::class)->except(['show']);
 
     Route::resource('attendance_days', AttendanceDayController::class)->except(['show']);
+
+    Route::post('time-log', TimeLogController::class)->name('time-log');
 });
 
 require __DIR__.'/settings.php';

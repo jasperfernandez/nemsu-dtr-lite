@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AttendanceDayRequest;
 use App\Http\Resources\AttendanceDayResource;
 use App\Http\Resources\EmployeeResource;
 use App\Enums\Role;
@@ -28,34 +27,20 @@ class AttendanceDayController extends Controller
 
         return Inertia::render('attendance-days/Index', [
             'attendanceDays' => AttendanceDayResource::collection($attendanceDays),
+            'isHr' => $user->hasRole(Role::EMPLOYEE),
             'employees' => $user->hasRole(Role::HR)
                 ? EmployeeResource::collection(Employee::all())
                 : [],
         ]);
     }
 
-    public function store(AttendanceDayRequest $request)
-    {
-        $this->authorize('create', AttendanceDay::class);
-
-        return new AttendanceDayResource(AttendanceDay::create($request->validated()));
-    }
-
-    public function update(AttendanceDayRequest $request, AttendanceDay $attendanceDay)
-    {
-        $this->authorize('update', $attendanceDay);
-
-        $attendanceDay->update($request->validated());
-
-        return new AttendanceDayResource($attendanceDay);
-    }
-
     public function destroy(AttendanceDay $attendanceDay)
     {
         $this->authorize('delete', $attendanceDay);
 
+        $attendanceDay->attendanceLogs()->delete();
         $attendanceDay->delete();
 
-        return response()->json();
+        return redirect()->route('attendance_days.index')->with('success', 'Attendance day and logs deleted successfully.');
     }
 }
