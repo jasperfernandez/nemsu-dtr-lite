@@ -56,10 +56,6 @@ const deleteDialog = useDialogManager<Employee>('delete-employee');
                         >
                             <TableHead
                                 class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
-                                >ID</TableHead
-                            >
-                            <TableHead
-                                class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
                                 >Employee #</TableHead
                             >
                             <TableHead
@@ -94,9 +90,6 @@ const deleteDialog = useDialogManager<Employee>('delete-employee');
                             :key="employee.id"
                             class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
                         >
-                            <TableCell class="p-4 align-middle">{{
-                                employee.id
-                            }}</TableCell>
                             <TableCell class="p-4 align-middle">{{
                                 employee.employee_number
                             }}</TableCell>
@@ -133,7 +126,7 @@ const deleteDialog = useDialogManager<Employee>('delete-employee');
                         </TableRow>
                         <TableEmpty
                             v-if="employees.length === 0"
-                            :colspan="8"
+                            :colspan="7"
                         >
                             No employees found.
                         </TableEmpty>

@@ -56,10 +56,6 @@ const deleteDialog = useDialogManager<Department>('delete-department');
                         >
                             <TableHead
                                 class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
-                                >ID</TableHead
-                            >
-                            <TableHead
-                                class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
                                 >Code</TableHead
                             >
                             <TableHead
@@ -82,9 +78,6 @@ const deleteDialog = useDialogManager<Department>('delete-department');
                             :key="department.id"
                             class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
                         >
-                            <TableCell class="p-4 align-middle">{{
-                                department.id
-                            }}</TableCell>
                             <TableCell class="p-4 align-middle">{{
                                 department.code
                             }}</TableCell>
