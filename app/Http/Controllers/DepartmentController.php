@@ -6,6 +6,7 @@ use App\Http\Requests\DepartmentRequest;
 use App\Http\Resources\DepartmentResource;
 use App\Models\Department;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Inertia\Inertia;
 
 class DepartmentController extends Controller
 {
@@ -15,14 +16,18 @@ class DepartmentController extends Controller
     {
         $this->authorize('viewAny', Department::class);
 
-        return DepartmentResource::collection(Department::all());
+        return Inertia::render('departments/Index', [
+            'departments' => DepartmentResource::collection(Department::all()),
+        ]);
     }
 
     public function store(DepartmentRequest $request)
     {
         $this->authorize('create', Department::class);
 
-        return new DepartmentResource(Department::create($request->validated()));
+        Department::create($request->validated());
+
+        return back()->with('success', 'Department added successfully.');
     }
 
     public function show(Department $department)
@@ -38,7 +43,7 @@ class DepartmentController extends Controller
 
         $department->update($request->validated());
 
-        return new DepartmentResource($department);
+        return back()->with('success', 'Department updated successfully.');
     }
 
     public function destroy(Department $department)
@@ -47,6 +52,6 @@ class DepartmentController extends Controller
 
         $department->delete();
 
-        return response()->json();
+        return back()->with('success', 'Department deleted successfully.');
     }
 }

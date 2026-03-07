@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\AttendanceLogController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -9,6 +12,12 @@ Route::inertia('/', 'Welcome', [
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+
+    Route::resource('departments', DepartmentController::class);
+
+    Route::resource('employees', EmployeeController::class);
+
+    Route::resource('attendance_logs', AttendanceLogController::class);
 });
 
 require __DIR__.'/settings.php';

@@ -6,15 +6,15 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class DepartmentRequest extends FormRequest
 {
-    public function rules()
+    public function rules(): array
     {
         return [
-            'code' => ['required'],
-            'name' => ['required'],
+            'code' => ['required', 'max:50', 'unique:departments,code'],
+            'name' => ['required', 'max:255'],
         ];
     }
 
-    public function authorize()
+    public function authorize(): true
     {
         return true;
     }
