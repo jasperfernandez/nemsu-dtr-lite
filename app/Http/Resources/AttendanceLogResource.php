@@ -15,6 +15,7 @@ class AttendanceLogResource extends JsonResource
             'id' => $this->id,
             'log_time' => $this->log_time,
             'type' => $this->type,
+            'source' => $this->source,
             'ip_address' => $this->ip_address,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

@@ -18,6 +18,6 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        $hr->assignRole(Role::HR);
+        $hr->assignRole(Role::HR, Role::EMPLOYEE);
     }
 }

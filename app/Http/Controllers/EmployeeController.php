@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Role;
 use App\Http\Requests\EmployeeRequest;
 use App\Http\Resources\DepartmentResource;
 use App\Http\Resources\EmployeeResource;
@@ -40,6 +41,8 @@ class EmployeeController extends Controller
             'email' => $validated['email'],
             'password' => $password,
         ]);
+
+        $user->assignRole(Role::EMPLOYEE);
 
         $user->notify(new EmployeeWelcomeNotification($password));
 

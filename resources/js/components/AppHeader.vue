@@ -2,7 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { Building2, ClipboardList, LayoutDashboard, Menu, Search, Users } from 'lucide-vue-next';
 import { computed } from 'vue';
-import AttendanceLogController from '@/actions/App/Http/Controllers/AttendanceLogController';
+import AttendanceDayController from '@/actions/App/Http/Controllers/AttendanceDayController';
 import DepartmentController from '@/actions/App/Http/Controllers/DepartmentController';
 import EmployeeController from '@/actions/App/Http/Controllers/EmployeeController';
 import AppLogo from '@/components/AppLogo.vue';
@@ -63,8 +63,8 @@ const mainNavItems: NavItem[] = [
         icon: LayoutDashboard,
     },
     {
-        title: 'Attendance Logs',
-        href: AttendanceLogController.index(),
+        title: 'Logs',
+        href: AttendanceDayController.index(),
         icon: ClipboardList,
     },
     {

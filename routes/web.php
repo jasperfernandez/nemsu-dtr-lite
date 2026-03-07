@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttendanceDayController;
 use App\Http\Controllers\AttendanceLogController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
@@ -13,11 +14,11 @@ Route::inertia('/', 'Welcome', [
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 
-    Route::resource('departments', DepartmentController::class);
+    Route::resource('departments', DepartmentController::class)->except(['show']);
 
-    Route::resource('employees', EmployeeController::class);
+    Route::resource('employees', EmployeeController::class)->except(['show']);
 
-    Route::resource('attendance_logs', AttendanceLogController::class);
+    Route::resource('attendance_days', AttendanceDayController::class)->except(['show']);
 });
 
 require __DIR__.'/settings.php';

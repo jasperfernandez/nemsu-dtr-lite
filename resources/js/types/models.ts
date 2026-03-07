@@ -21,3 +21,24 @@ export type Employee = {
     updated_at: string;
 }
 
+export type AttendanceLog = {
+    id: number;
+    attendance_day_id: number;
+    employee_id: number;
+    log_time: string;
+    type: 'in' | 'out';
+    source: 'web' | 'biometric' | 'manual';
+    ip_address: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export type AttendanceDay = {
+    id: number;
+    employee_id: number | null;
+    work_date: string;
+    created_at: string;
+    updated_at: string;
+    employee?: Employee;
+    attendance_logs?: AttendanceLog[];
+}

@@ -9,4 +9,5 @@ enum AttendanceDayStatus: string
     case ABSENT = 'absent';
     case LEAVE = 'leave';
     case HOLIDAY = 'holiday';
+    case SUSPENDED = 'suspended';
 }

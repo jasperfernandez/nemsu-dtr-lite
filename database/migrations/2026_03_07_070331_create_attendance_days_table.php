@@ -6,20 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('attendance_days', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->nullable();
             $table->date('work_date');
-            $table->string('status');
-            $table->text('remarks')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('attendance_days');
     }

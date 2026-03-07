@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('attendance_logs', function (Blueprint $table) {
             $table->id();
@@ -14,13 +14,14 @@ return new class extends Migration
             $table->foreignId('employee_id')->constrained('employees');
             $table->dateTime('log_time');
             $table->string('type');
+            $table->string('source');
             $table->string('ip_address');
             $table->timestamps();
             $table->softDeletes();
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('attendance_logs');
     }

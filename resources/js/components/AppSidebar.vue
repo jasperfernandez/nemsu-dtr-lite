@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-vue-next';
+import { Building2, CalendarDays, LayoutGrid, Users } from 'lucide-vue-next';
+import AttendanceDayController from '@/actions/App/Http/Controllers/AttendanceDayController';
+import DepartmentController from '@/actions/App/Http/Controllers/DepartmentController';
+import EmployeeController from '@/actions/App/Http/Controllers/EmployeeController';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -23,20 +26,24 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+        title: 'Attendance Days',
+        href: AttendanceDayController.index(),
+        icon: CalendarDays,
+    },
+    {
+        title: 'Employees',
+        href: EmployeeController.index(),
+        icon: Users,
+    },
+    {
+        title: 'Departments',
+        href: DepartmentController.index(),
+        icon: Building2,
+    },
 ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
-];
+const footerNavItems: NavItem[] = [];
 </script>
 
 <template>
