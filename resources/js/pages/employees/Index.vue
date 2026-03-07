@@ -2,6 +2,7 @@
 import { Head } from '@inertiajs/vue3';
 import EmployeeController from '@/actions/App/Http/Controllers/EmployeeController';
 import Heading from '@/components/Heading.vue';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
     Table,
@@ -44,7 +45,7 @@ const deleteDialog = useDialogManager<Employee>('delete-employee');
             class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
         >
             <div class="flex items-center justify-between">
-                <Heading title="Employees" />
+                <Heading title="Employees" description="Manage your organization's employees." />
                 <Button size="lg" @click="addDialog.open()">Add Employee</Button>
             </div>
             <div class="rounded-md border">
@@ -111,9 +112,11 @@ const deleteDialog = useDialogManager<Employee>('delete-employee');
                             <TableCell class="p-4 align-middle">{{
                                 employee.position
                             }}</TableCell>
-                            <TableCell class="p-4 align-middle capitalize">{{
-                                employee.status
-                            }}</TableCell>
+                            <TableCell class="p-4 align-middle">
+                                <Badge :variant="employee.status === 'active' ? 'default' : 'secondary'" class="capitalize">
+                                    {{ employee.status }}
+                                </Badge>
+                            </TableCell>
                             <TableCell class="align-middle">
                                 <Button
                                     variant="link"

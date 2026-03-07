@@ -14,7 +14,9 @@ class TimeLogController extends Controller
     {
         $employee = $request->user()->employee;
 
-        abort_unless($employee !== null, 403, 'No employee record linked to this account.');
+        if (is_null($employee)) {
+            return back()->with('error', 'No employee record linked to this account.');
+        }
 
         $today = now()->toDateString();
 
@@ -25,6 +27,10 @@ class TimeLogController extends Controller
                 'work_date' => $today,
             ],
         );
+
+        if ($attendanceDay->attendanceLogs()->count() >= 4) {
+            return back()->with('error', 'Maximum attendance logs reached for today.');
+        }
 
         // Determine IN or OUT based on the last log
         $lastLog = AttendanceLog::where('attendance_day_id', $attendanceDay->id)

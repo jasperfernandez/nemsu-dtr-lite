@@ -35,6 +35,7 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import UserMenuContent from '@/components/UserMenuContent.vue';
+import { useAuthorization } from '@/composables/useAuthorization';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl } from '@/lib/utils';
@@ -52,6 +53,7 @@ const props = withDefaults(defineProps<Props>(), {
 const page = usePage();
 const auth = computed(() => page.props.auth);
 const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
+const { isHr } = useAuthorization();
 
 const activeItemStyles =
     'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
@@ -71,11 +73,13 @@ const mainNavItems: NavItem[] = [
         title: 'Employees',
         href: EmployeeController.index(),
         icon: Users,
+        show: isHr(),
     },
     {
         title: 'Departments',
         href: DepartmentController.index(),
         icon: Building2,
+        show: isHr(),
     },
 ];
 
@@ -113,6 +117,7 @@ const rightNavItems: NavItem[] = [];
                                 <nav class="-mx-3 space-y-1">
                                     <Link
                                         v-for="item in mainNavItems"
+                                        v-show="item.show !== false"
                                         :key="item.title"
                                         :href="item.href"
                                         class="flex items-center gap-x-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent"
@@ -165,6 +170,7 @@ const rightNavItems: NavItem[] = [];
                         >
                             <NavigationMenuItem
                                 v-for="(item, index) in mainNavItems"
+                                v-show="item.show !== false"
                                 :key="index"
                                 class="relative flex h-full items-center"
                             >

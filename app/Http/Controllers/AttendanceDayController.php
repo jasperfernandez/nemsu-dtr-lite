@@ -27,7 +27,6 @@ class AttendanceDayController extends Controller
 
         return Inertia::render('attendance-days/Index', [
             'attendanceDays' => AttendanceDayResource::collection($attendanceDays),
-            'isHr' => $user->hasRole(Role::EMPLOYEE),
             'employees' => $user->hasRole(Role::HR)
                 ? EmployeeResource::collection(Employee::all())
                 : [],

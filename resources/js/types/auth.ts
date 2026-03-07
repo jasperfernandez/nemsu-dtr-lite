@@ -11,6 +11,8 @@ export type User = {
 
 export type Auth = {
     user: User;
+    roles: string[];
+    can: Record<string, boolean>;
 };
 
 export type TwoFactorConfigContent = {
