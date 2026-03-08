@@ -2,6 +2,6 @@
 
 use App\Http\Controllers\OAuthGoogleController;
 
-Route::get('/oauth/google/redirect', [OAuthGoogleController::class, 'redirect']);
+Route::get('/oauth/{provider}/redirect', [OAuthGoogleController::class, 'redirect']);
 
-Route::get('/oauth/google/callback', [OAuthGoogleController::class, 'callback']);
+Route::get('/oauth/{provider}/callback', [OAuthGoogleController::class, 'callback']);

@@ -21,7 +21,7 @@ class OAuthGoogleController extends Controller
             ->redirect();
     }
 
-    public function callback(): RedirectResponse
+    public function callback()
     {
         try {
             $googleUser = Socialite::driver('google')
@@ -51,7 +51,10 @@ class OAuthGoogleController extends Controller
 
             Auth::login($user, remember: true);
 
-            return redirect()->intended('/dashboard');
+            return view('oauth.callback', [
+                'provider' => 'google',
+                'status' => 'success',
+            ]);
         } catch (Throwable $e) {
             Log::error('Google login failed: '.$e->getMessage());
 
