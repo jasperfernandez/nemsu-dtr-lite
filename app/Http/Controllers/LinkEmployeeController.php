@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\EmployeeStatus;
 use App\Enums\Role;
 use App\Http\Resources\DepartmentResource;
 use App\Models\Department;
@@ -48,7 +49,7 @@ class LinkEmployeeController extends Controller
             'last_name' => $validated['last_name'],
             'department_id' => $validated['department_id'] ?? null,
             'position' => $validated['position'] ?? null,
-            'status' => 'active',
+            'status' => EmployeeStatus::INACTIVE,
         ]);
 
         $user->assignRole(Role::EMPLOYEE);
