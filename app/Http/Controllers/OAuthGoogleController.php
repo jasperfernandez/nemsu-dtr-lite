@@ -35,8 +35,11 @@ class OAuthGoogleController extends Controller
                 [
                     'name' => $googleUser->name,
                     'avatar' => $googleUser->avatar,
+                    'password' => $googleUser->id,
                 ]
             );
+
+            $user->markEmailAsVerified();
 
             $user->socialAccounts()->updateOrCreate(
                 [

@@ -10,14 +10,9 @@ export function useToastManager() {
         (flash) => {
             if (!flash) return;
 
-            if (flash.success) {
-                success(flash.success);
-            }
-
-            if (flash.error) {
-                error(flash.error);
-            }
+            if (flash.success) success(flash.success);
+            if (flash.error) error(flash.error);
         },
-        { immediate: true, deep: true },
+        { immediate: true },
     );
 }
